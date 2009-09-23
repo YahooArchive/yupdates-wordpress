@@ -33,11 +33,11 @@
  **/
 
 function yupdates_plugin_options() {
-    $ck = get_option('yupdates_consumer_key');
-    $cks = get_option('yupdates_consumer_secret');
-    $appid = get_option('yupdates_application_id');
+	$ck = get_option('yupdates_consumer_key');
+	$cks = get_option('yupdates_consumer_secret');
+	$appid = get_option('yupdates_application_id');
 	$title_template = get_option('yupdates_title_template');
-
+	
 	if($title_template == "") $title_template = "posted '#blog_title' on their WordPress blog '#blog_name'";
 ?>
 <div class="wrap">

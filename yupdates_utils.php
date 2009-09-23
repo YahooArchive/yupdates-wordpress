@@ -31,28 +31,30 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  *   THE SOFTWARE.
  **/
-
-	function yupdates_has_session($application, $session_store) {
-		if($session_store->hasAccessToken()) 
+	
+	$yupdates_session_store = NULL;
+	
+	function yupdates_has_session($session) {
+		if($session->store->hasAccessToken()) 
 		{
-			$access_token = $session_store->fetchAccessToken();
+			$access_token = $session->store->fetchAccessToken();
 			// $application->token = $access_token;
-			$access_token = $application->getAccessToken($access_token);
-			$session_store->storeAccessToken($access_token);
+			$access_token = $session->application->getAccessToken($access_token);
+			$session->store->storeAccessToken($access_token);
 			
-			return ($application->token && $application->token->key);
+			return ($session->application->token && $session->application->token->key);
 		} 
-		else if($session_store->hasRequestToken()) 
+		else if($session->store->hasRequestToken()) 
 		{
-			$request_token = $session_store->fetchRequestToken();
+			$request_token = $session->store->fetchRequestToken();
 			
 			if(array_key_exists("oauth_token", $_REQUEST) && array_key_exists("oauth_verifier", $_REQUEST)) {
 				$oauth_verifier = $_REQUEST["oauth_verifier"];
-				$access_token = $application->getAccessToken($request_token, $oauth_verifier);
+				$access_token = $session->application->getAccessToken($request_token, $oauth_verifier);
 				
 				if($access_token->key && $access_token->secret) {
-					$session_store->clearRequestToken();
-					$session_store->storeAccessToken($access_token);
+					$session->store->clearRequestToken();
+					$session->store->storeAccessToken($access_token);
 					return TRUE;
 				}
 			}
@@ -63,9 +65,9 @@
 		{
 			$callback_params = array("auth_popup"=>"true");
 			$callback = yupdates_get_oauthCallback($callback_params);
-			$request_token = $application->getRequestToken($callback);
+			$request_token = $session->application->getRequestToken($callback);
 			
-			$session_store->storeRequestToken($request_token);
+			$session->store->storeRequestToken($request_token);
 			
 			return FALSE;
 		}
@@ -82,21 +84,43 @@
         exit();
 	}
 	
-	function yupdates_get_oauthCallback($parameters) {
+	function yupdates_get_oauthCallback($parameters=array()) {
 		return sprintf("http://%s%s&%s",$_SERVER["HTTP_HOST"], $_SERVER["REQUEST_URI"], http_build_query($parameters));
 	} 
 	
-	function yupdates_get_sessionStore() {
+	function yupdates_get_currentUserSessionStore() {
 		if(!$yupdates_session_store) {
 			global $current_user;
 	    	get_currentuserinfo();
 			
 			$user = $current_user->user_login;
-			$ck = get_option("yupdates_consumer_key");
-			
-			$yupdates_session_store = new WordPressSessionStore($user, $ck);
+			$yupdates_session_store = yupdates_get_sessionStore($user)
 		}
 		return $yupdates_session_store;
+	}
+	
+	function yupdates_get_sessionStore($user) {
+		return new WordPressSessionStore($user, get_option("yupdates_consumer_key"));
+	}
+	
+	function yupdates_get_application() {
+		// fetch application keys from user options
+		$ck = get_option("yupdates_consumer_key");
+		$cks = get_option("yupdates_consumer_secret");
+		$appid = get_option("yupdates_application_id");
+		
+		return new YahooOAuthApplication($ck, $cks, $appid);
+	}
+	
+	function yupdates_get_session($user=NULL) {
+		// 
+		$session = new stdclass();
+		$session->application = yupdates_get_application();
+		$session->store = (is_null($user)) ? yupdates_get_currentUserSessionStore() : yupdates_get_sessionStore($user);
+		
+		$session->hasSession = yupdates_has_session($session);
+		
+		return $session;
 	}
 
 	function yupdates_close_popup() {
