@@ -40,19 +40,43 @@ function yupdates_plugin_options() {
 	
 	if($title_template == "") $title_template = "posted '#blog_title' on their WordPress blog '#blog_name'";
 ?>
+<style type="text/css">
+	.authTitle {
+		text-transform: uppercase;
+	}
+	.authStep {
+		font-weight: bold;
+	}
+</style>
 <div class="wrap">
-    <h2>Yahoo! Updates Plugin Options</h2>
+	<h3 class="authTitle">Get a Yahoo! API Key</h3>
+	<p>1. Go to the <a href="https://developer.apps.yahoo.com/dashboard/createKey.html" target="_new">Yahoo! Developer Network </a>to register for an API key and complete the form with the following information:</p>
+	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step1_ydn.png" width="632" height="220"></p>
+	
+	<p class="authStep"><strong>Select access to private user data.</strong></p>
+	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step2_scopes.png"></p>
 
-    <p>In order to use the Yahoo! Updates plugin, you will need to register as an application developer on <a href="http://developer.apps.yahoo.com/dashboard/createKey.html" target="_blank">Yahoo!</a>. When signing up, make sure to select "This app requires access to private user data" and select "Read/Write" for Yahoo! Updates.</p>
+	<p class="authStep"><strong>3. Select Read/Write access to Yahoo! Updates</strong></td>
+	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step3_read-write.png"></p>
 
-    <p>After completing the process, you will be given a consumer key, consumer secret and an application ID. Include those values below and save your changes. When done, visit the <a href="users.php?page=yupdates_menu">Yahoo! Updates Authorization page</a> to authorize the Yahoo! Updates plugin to access your Yahoo! Updates.</p>
+	<p class="authStep"><strong>4. Agree to the Yahoo! Terms of Use and click Get API Key.</strong></p>
+	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step4_apikey.png"></p>
 
+	<p class="authStep"><strong>5. If you haven't already done so, verify 
+		ownership of your domain to Yahoo! by creating a file of a specific 
+		name and uploading that to the root directory of your domain.</strong></p>
+	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step5_domain.png"></p>
+	
+	<p class="authStep"><strong>6. Once you've successfully created your API key, copy your authentication information to the Plugin Settings below:</strong></p>
+	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step6_success.png" width="743" height="413"></p>
+
+	<h3 class="authTitle">Yahoo! Plugin Settings</h3>
     <form method="post" action="options.php">
-        <?php 
+	<?php 
         if(function_exists("wp_nonce_field")) {
             wp_nonce_field('update-options'); 
         }
-        ?>
+	?>
         <table class="form-table">
             <tr valign="top">
                 <th scope="row">Yahoo! Consumer Key</th>
@@ -67,9 +91,12 @@ function yupdates_plugin_options() {
                 <td><input type="text" size=20 name="yupdates_application_id" value="<?php echo $appid; ?>" /></td>
             </tr>
             <tr valign="top">
-                <th scope="row">Your Update Title</th>
-                <td><input type="text" size=50 name="yupdates_title_template" value="<?php echo $title_template; ?>" /></td>
-            </tr>
+				<th scope="row">Customize your Yahoo! Updates stream:</th>
+				<td><p>&lt;Your Yahoo! name&gt;
+					<input type="text" size=50 name="yupdates_title_template" value="<?php echo $title_template; ?>" />
+				</p>
+			</td>
+		</tr>
         </table>
         <input type="hidden" name="action" value="update" />
         <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template" />
