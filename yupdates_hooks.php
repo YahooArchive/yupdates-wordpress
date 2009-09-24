@@ -58,10 +58,10 @@ function yupdates_publish_post($postid) {
 		$response = $session->application->insertUpdate(null, $update->description, $update->title, $update->link);
 		
 		// todo: do better error handling
-        if(is_null($response)) {
-            error_log("Failed to generate Yahoo! Update for blog post.");
-        }
-    } else {
+		if(is_null($response)) {
+			error_log("Failed to generate Yahoo! Update for blog post.");
+		}
+	} else {
 		error_log('no session available');
 	}
 }

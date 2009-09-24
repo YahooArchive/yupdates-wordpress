@@ -33,7 +33,7 @@
  **/
 
 function yupdates_yahoo_updates_widget($args) {
-    extract($args);
+	extract($args);
 	
 	$users = yupdatesdb_listUpdatesUsers();
 	$updates = array();
@@ -131,8 +131,8 @@ function yupdates_ago($timestamp) {
 	$unit = NULL;
 	
 	if($difference < 60) {
-        return "moments ago";
-    } else {
+		return "moments ago";
+	} else {
         $difference = round($difference / 60);
     	if($difference < 60) {
 			$unit = $difference == 1 ? "minute" : "minutes";
@@ -140,7 +140,7 @@ function yupdates_ago($timestamp) {
 			$difference = round($difference / 60);
 			if($difference < 24) {
 				$unit = $difference == 1 ? "hour" : "hours";
-            } else {
+			} else {
 				$difference = round($difference / 24);
 				if($difference < 7) {
 					$unit = $difference == 1 ? "day" : "days";
