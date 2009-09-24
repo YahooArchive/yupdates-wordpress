@@ -92,11 +92,8 @@ function yupdates_plugin_options() {
             </tr>
             <tr valign="top">
 				<th scope="row">Customize your Yahoo! Updates stream:</th>
-				<td><p>&lt;Your Yahoo! name&gt;
-					<input type="text" size=50 name="yupdates_title_template" value="<?php echo $title_template; ?>" />
-				</p>
-			</td>
-		</tr>
+				<td><p>&lt;Your Yahoo! name&gt;<input type="text" size=50 name="yupdates_title_template" value="<?php echo $title_template; ?>" /></p></td>
+			</tr>
         </table>
         <input type="hidden" name="action" value="update" />
         <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template" />
