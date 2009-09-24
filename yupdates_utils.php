@@ -94,7 +94,7 @@
 	    	get_currentuserinfo();
 			
 			$user = $current_user->user_login;
-			$yupdates_session_store = yupdates_get_sessionStore($user)
+			$yupdates_session_store = yupdates_get_sessionStore($user);
 		}
 		return $yupdates_session_store;
 	}
