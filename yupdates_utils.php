@@ -25,7 +25,7 @@
  *
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *   FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
  *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -38,7 +38,11 @@
 		if($session->store->hasAccessToken()) 
 		{
 			$access_token = $session->store->fetchAccessToken();
-			// $application->token = $access_token;
+			
+			if(!$access_token->key || !$access_token->secret) {
+				return FALSE;
+			}
+			
 			$access_token = $session->application->getAccessToken($access_token);
 			$session->store->storeAccessToken($access_token);
 			
@@ -47,6 +51,12 @@
 		else if($session->store->hasRequestToken()) 
 		{
 			$request_token = $session->store->fetchRequestToken();
+			
+			if(!$request_token->key || !$request_token->secret) {
+				$session->store->clearRequestToken();
+				yupdates_get_requestToken($session);
+				return FALSE;
+			}
 			
 			if(array_key_exists("oauth_token", $_REQUEST) && array_key_exists("oauth_verifier", $_REQUEST)) {
 				$oauth_verifier = $_REQUEST["oauth_verifier"];
@@ -63,14 +73,17 @@
 		}
 		else 
 		{
-			$callback_params = array("auth_popup"=>"true");
-			$callback = yupdates_get_oauthCallback($callback_params);
-			$request_token = $session->application->getRequestToken($callback);
-			
-			$session->store->storeRequestToken($request_token);
+			yupdates_get_requestToken($session);
 			
 			return FALSE;
 		}
+	}
+	
+	function yupdates_get_requestToken($session) {
+		$callback_params = array("auth_popup"=>"true");
+		$callback = yupdates_get_oauthCallback($callback_params);
+		$request_token = $session->application->getRequestToken($callback);
+		$session->store->storeRequestToken($request_token);
 	}
 	
 	function yupdates_clear_session() {
@@ -117,7 +130,7 @@
 	}
 	
 	function yupdates_get_session($user=NULL) {
-		// 
+		// create session object with application, token store
 		$session = new stdclass();
 		$session->application = yupdates_get_application();
 		$session->store = (is_null($user)) ? yupdates_get_currentUserSessionStore() : yupdates_get_sessionStore($user);

@@ -50,7 +50,9 @@ function yupdates_plugin_options() {
 </style>
 <div class="wrap">
 	<h3 class="authTitle">Get a Yahoo! API Key</h3>
-	<p>1. Go to the <a href="https://developer.apps.yahoo.com/dashboard/createKey.html" target="_new">Yahoo! Developer Network </a>to register for an API key and complete the form with the following information:</p>
+	<p>1. Go to the <a href="https://developer.apps.yahoo.com/dashboard/createKey.html" target="_new">
+		Yahoo! Developer Network</a> to register for an API key and complete 
+		the form with the following information:</p>
 	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step1_ydn.png" width="632" height="220"></p>
 	
 	<p class="authStep"><strong>Select access to private user data.</strong></p>
@@ -67,10 +69,13 @@ function yupdates_plugin_options() {
 		name and uploading that to the root directory of your domain.</strong></p>
 	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step5_domain.png"></p>
 	
-	<p class="authStep"><strong>6. Once you've successfully created your API key, copy your API key information to the Plugin Settings below:</strong></p>
+	<p class="authStep"><strong>6. Once you've successfully created your API 
+		key, copy your API key information to the Plugin Settings below:</strong></p>
 	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step6_success.png" width="743" height="413"></p>
-
+	
+	<a name="settings"></a>
 	<h3 class="authTitle">Yahoo! Plugin Settings</h3>
+	
     <form method="post" action="options.php">
 	<?php 
         if(function_exists("wp_nonce_field")) {
@@ -80,23 +85,22 @@ function yupdates_plugin_options() {
         <table class="form-table">
             <tr valign="top">
                 <th scope="row">Yahoo! API Key</th>
-                <td><input type="text" size=64 name="yupdates_consumer_key" value="<?php echo $ck; ?>" /></td>
+                <td><input type="text" size="64" name="yupdates_consumer_key" value="<?php echo $ck; ?>" /></td>
             </tr>
             <tr valign="top">
                 <th scope="row">Yahoo! Shared Secret</th>
-                <td><input type="text" size=64 name="yupdates_consumer_secret" value="<?php echo $cks; ?>" /></td>
+                <td><input type="text" size="64" name="yupdates_consumer_secret" value="<?php echo $cks; ?>" /></td>
             </tr>
             <tr valign="top">
                 <th scope="row">Yahoo! Application ID</th>
-                <td><input type="text" size=20 name="yupdates_application_id" value="<?php echo $appid; ?>" /></td>
+                <td><input type="text" size="20" name="yupdates_application_id" value="<?php echo $appid; ?>" /></td>
             </tr>
             <tr valign="top">
 				<th scope="row">Customize your Yahoo! Updates stream:</th>
-				<td><p>&lt;Your Yahoo! name&gt;
-					<input type="text" size=50 name="yupdates_title_template" value="<?php echo $title_template; ?>" />
-				</p>
-			</td>
-		</tr>
+				<td>
+					<p>&lt;Your Yahoo! name&gt;<input type="text" size="50" name="yupdates_title_template" value="<?php echo $title_template; ?>" /></p>
+				</td>
+			</tr>
         </table>
         <input type="hidden" name="action" value="update" />
         <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template" />

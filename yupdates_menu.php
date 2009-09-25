@@ -32,9 +32,6 @@
  *   THE SOFTWARE.
  **/
 
-require_once("lib/OAuth/OAuth.php");
-require_once("lib/Yahoo/YahooOAuthApplication.class.php");
-
 function yupdates_menu() {
 	global $current_user;
 	get_currentuserinfo();
@@ -57,13 +54,16 @@ function yupdates_menu() {
 	} else {
 		$sharingUpdates = yupdatesdb_isUpdatesUser($current_user->user_login);
 	}
+	
 ?>
+
 <div class="wrap">
     <h2>Yahoo! Updates</h2>
+
 <?php 
 	if($session->application && $session->hasSession) { 
 		echo <<<HTML
-You have authorized the Yahoo! Updates plugin.
+You have already authorized the Yahoo! Updates plugin.
 <form method="post">
 HTML;
 		
@@ -85,6 +85,7 @@ You have not yet authorized the Yahoo! Updates plugin.
 HTML;
 	}
 ?>
+
 </div>
 
 <script type="text/javascript">
@@ -97,6 +98,7 @@ HTML;
       else alert("Error: No request token / auth url");
    }
 </script>
+
 <script type="text/javascript">
 // a simplified version of step2 popuplib.js
 var PopupManager = {

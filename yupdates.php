@@ -68,48 +68,70 @@ Author URI: http://www.yahoo.com/
 	add_action("publish_post", "yupdates_publish_post");
 ?>
 <?php
-function yupdates_plugin_menu() {
-	add_submenu_page("users.php", "Yahoo! Updates Page", "Yahoo! Updates Authorization", 0, "yupdates_menu", "yupdates_menu");
-	add_options_page("Yahoo! Updates Plugin Options", "Yahoo! Updates Plugin", 8, "yupdates_plugin_options", "yupdates_plugin_options");
-}
-
-function yupdates_auth_init() {
-	$session = yupdates_get_session();
-	
-	// handle directions from auth flow
-	if(array_key_exists("yupdates_clearauthorization", $_REQUEST)) 
-	{
-		yupdates_clear_session();
-	}
-	else if(array_key_exists("auth_popup", $_REQUEST))
-	{
-		yupdates_close_popup();
+	function yupdates_plugin_menu() {
+		add_submenu_page("users.php", "Yahoo! Updates Page", "Yahoo! Updates Authorization", 0, "yupdates_menu", "yupdates_menu");
+		add_options_page("Yahoo! Updates Plugin Options", "Yahoo! Updates Plugin", 8, "yupdates_plugin_options", "yupdates_plugin_options");
 	}
 	
-	// show warnings 
-	if(!yupdatesdb_hasApplicationInfo() 
-		&& stripos($_SERVER["REQUEST_URI"], PLUGIN_OPTIONS_URI) === FALSE)
-	{
-		add_action("admin_notices", "yupdates_appinfo_warning");
-	} 
-	else if( yupdatesdb_hasApplicationInfo() 
-		&& stripos($_SERVER["REQUEST_URI"], USER_MENU_URI) === FALSE
-		&& !$session->hasSession )
+    function yupdates_auth_init() {
+		$session = yupdates_get_session();
 		
-	{
-		add_action("admin_notices", "yupdates_authorization_warning");
+		// handle directions from auth flow
+		if(array_key_exists("yupdates_clearauthorization", $_REQUEST)) 
+		{
+			yupdates_clear_session();
+		}
+		else if(array_key_exists("auth_popup", $_REQUEST))
+		{
+			yupdates_close_popup();
+		}
+		
+		// show warnings 
+		if($session->hasSession == false)
+		{
+			if($session->store->hasRequestToken()) {
+				$request_token = $session->store->fetchRequestToken();
+				if(is_null($request_token->key) && !is_null($request_token->oauth_problem)) {
+					add_action("admin_notices", "yupdates_requestTokenProblem_warning");
+				}
+			} else if($session->store->hasAccessToken()) {
+				
+			} else if(yupdatesdb_hasApplicationInfo() && stripos($_SERVER["REQUEST_URI"], USER_MENU_URI) === FALSE ) {
+				add_action("admin_notices", "yupdates_authorization_warning");
+			}
+		}
+		
+		if(!yupdatesdb_hasApplicationInfo() 
+			&& stripos($_SERVER["REQUEST_URI"], PLUGIN_OPTIONS_URI) === FALSE)
+		{
+			add_action("admin_notices", "yupdates_appinfo_warning");
+		}
 	}
-}
-
-function yupdates_appinfo_warning() { 
-	echo <<<HTML
-<div id="yupdates-appinfo-warning" class="updated fade"><p><strong>You haven't configured the Yahoo! Updates Plugin yet. <a href="options-general.php?page=yupdates_plugin_options">Configure the plugin.</a></strong></p></div>
+	
+	function yupdates_requestTokenProblem_warning() {
+		$session_store = yupdates_get_currentUserSessionStore();
+		$token = $session_store->fetchRequestToken();
+		$oauth_problem = $token->oauth_problem;
+		echo <<<HTML
+<div id="yupdates-authorization-warning" class="updated fade">
+	<p><strong>OAuth Error: Request token $oauth_problem. <a href="options-general.php?page=yupdates_plugin_options#settings">Re-configure the plugin.</a></strong></p>
+</div>
 HTML;
 	}
 	
-function yupdates_authorization_warning() {
-	echo <<<HTML
-<div id="yupdates-authorization-warning" class="updated fade"><p><strong>You haven't authorized the Yahoo! Updates Plugin yet. <a href="users.php?page=yupdates_menu">Authorize the plugin now.</a></strong></p></div>
+	function yupdates_appinfo_warning() { 
+		echo <<<HTML
+<div id="yupdates-appinfo-warning" class="updated fade">
+	<p><strong>You haven't configured the Yahoo! Updates Plugin yet. <a href="options-general.php?page=yupdates_plugin_options">Configure the plugin.</a></strong></p>
+</div>
 HTML;
-}
+	}
+	
+	function yupdates_authorization_warning() {
+		echo <<<HTML
+<div id="yupdates-authorization-warning" class="updated fade">
+	<p><strong>You haven't authorized the Yahoo! Updates Plugin yet. <a href="users.php?page=yupdates_menu">Authorize the plugin now.</a></strong></p>
+</div>
+HTML;
+	}
 ?>
