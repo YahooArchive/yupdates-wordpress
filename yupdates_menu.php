@@ -63,7 +63,7 @@ function yupdates_menu() {
 <?php 
 	if($session->application && $session->hasSession) { 
 		echo <<<HTML
-You have already authorized the Yahoo! Updates plugin.
+You have authorized the Yahoo! Updates plugin.
 <form method="post">
 HTML;
 		
@@ -90,8 +90,11 @@ HTML;
 <script type="text/javascript">
    var _gel = function(el) {return document.getElementById(el)};
    var _yupdates_auth_url = "<?php echo $auth_url; ?>";
-   var _yupdates_authorize = function() {
-      if(_yupdates_auth_url != "") PopupManager.open(_yupdates_auth_url,600,435);
+   
+   function _yupdates_authorize() {
+      if(_yupdates_auth_url != "") 
+         PopupManager.open(_yupdates_auth_url,600,435);
+      else alert("Error: No request token / auth url");
    }
 </script>
 <script type="text/javascript">
