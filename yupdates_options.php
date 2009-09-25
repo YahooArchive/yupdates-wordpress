@@ -67,7 +67,7 @@ function yupdates_plugin_options() {
 		name and uploading that to the root directory of your domain.</strong></p>
 	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step5_domain.png"></p>
 	
-	<p class="authStep"><strong>6. Once you've successfully created your API key, copy your authentication information to the Plugin Settings below:</strong></p>
+	<p class="authStep"><strong>6. Once you've successfully created your API key, copy your API key information to the Plugin Settings below:</strong></p>
 	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step6_success.png" width="743" height="413"></p>
 
 	<h3 class="authTitle">Yahoo! Plugin Settings</h3>
@@ -79,11 +79,11 @@ function yupdates_plugin_options() {
 	?>
         <table class="form-table">
             <tr valign="top">
-                <th scope="row">Yahoo! Consumer Key</th>
+                <th scope="row">Yahoo! API Key</th>
                 <td><input type="text" size=64 name="yupdates_consumer_key" value="<?php echo $ck; ?>" /></td>
             </tr>
             <tr valign="top">
-                <th scope="row">Yahoo! Consumer Secret</th>
+                <th scope="row">Yahoo! Shared Secret</th>
                 <td><input type="text" size=64 name="yupdates_consumer_secret" value="<?php echo $cks; ?>" /></td>
             </tr>
             <tr valign="top">
@@ -92,8 +92,11 @@ function yupdates_plugin_options() {
             </tr>
             <tr valign="top">
 				<th scope="row">Customize your Yahoo! Updates stream:</th>
-				<td><p>&lt;Your Yahoo! name&gt;<input type="text" size=50 name="yupdates_title_template" value="<?php echo $title_template; ?>" /></p></td>
-			</tr>
+				<td><p>&lt;Your Yahoo! name&gt;
+					<input type="text" size=50 name="yupdates_title_template" value="<?php echo $title_template; ?>" />
+				</p>
+			</td>
+		</tr>
         </table>
         <input type="hidden" name="action" value="update" />
         <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template" />
