@@ -9,7 +9,10 @@
  * @package    yos-updates-wordpress
  * @subpackage yahoo
  *
- * @author     Ryan Kennedy, Lawrence Morrisroe <lem@yahoo-inc.com>, Zach Graves <zachg@yahoo-inc.com>
+ * @author     Ryan Kennedy, 
+ * @author     Lawrence Morrisroe <lem@yahoo-inc.com>
+ * @author     Zach Graves <zachg@yahoo-inc.com>
+ * @author     Micah Laaker <micahl@yahoo-inc.com>
  * @copyright  Copyrights for code authored by Yahoo! Inc. is licensed under the following terms:
  * @license    BSD Open Source License
  *
