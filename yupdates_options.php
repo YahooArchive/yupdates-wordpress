@@ -93,7 +93,7 @@ Enter your API Key, Shared Secret, and App ID from the Yahoo! Developer Network.
 
 	<h4 class="authTitle">How to get a Yahoo! API Key</h4>
 	<ol>
-	<li><p>Go to the <a href="https://developer.apps.yahoo.com/dashboard/createKey.html" target="_new">
+	<li><p>Go to the <a href="https://developer.apps.yahoo.com/dashboard/createKey.html" target="_new"> 
 		Yahoo! Developer Network</a> to register for an API key, and complete 
 		the form with the following information:</p>
 		<ol>
@@ -116,11 +116,11 @@ Enter your API Key, Shared Secret, and App ID from the Yahoo! Developer Network.
 	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step4_apikey.png"></p></li>
 
 	<li><p class="authStep"><strong>If you haven't done so previously, verify 
-		ownership of your domain with Yahoo! by creating a file with the specified 
-		name and uploading that to the root directory of your domain.</strong></p></li>
+       ownership of your domain with Yahoo! by creating a file with the specified 
+       name and uploading that to the root directory of your domain.</strong></p></li>
 	
 	<li><p class="authStep"><strong>Once you've successfully created your API 
-		key, copy your API key information from the success screen (sample below) to the Yahoo! API Access Settings below:</strong></p>
+       key, copy your API key information from the success screen (sample below) to the Yahoo! API Access Settings below:</strong></p>
 	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step6_success.png" width="562" height="233"></p></li>
 	
 	</ol>
@@ -130,20 +130,19 @@ Enter your API Key, Shared Secret, and App ID from the Yahoo! Developer Network.
 <hr noshade="noshade" />
 	<h3 class="authTitle">Yahoo! Updates Settings</h3>
 	    <table class="form-table">
-            <tr valign="top">
-				<th scope="row">Customize your Yahoo! Updates event display:</th>
-				<td>
-					<p>&lt;Your Yahoo! name&gt;<input type="text" size="50" name="yupdates_title_template" value="<?php echo $title_template; ?>" />
-						<br />
-						<small>Use the following tags in the display field above:</small>
-						<br />
-						<ul>
-							<li><small>"#blog_title" = the title of your blog post</small></li>
-							<li><small>"#blog_name" = the name of your blog (i.e. "<?php bloginfo('name'); ?>")</small></li>
-						</ul>
-					</p>
-				</td>
-			</tr>
+           <tr valign="top">
+              <th scope="row">Customize your Yahoo! Updates event display:</th>
+              <td>
+                 <p>&lt;Your Yahoo! name&gt;<input type="text" size="50" name="yupdates_title_template" value="<?php echo $title_template; ?>" />
+                 <br />
+                 <small>Use the following tags in the display field above:</small>
+                 <br />
+                 <ul>
+                    <li><small>"#blog_title" = the title of your blog post</small></li>
+                    <li><small>"#blog_name" = the name of your blog (i.e. "<?php bloginfo('name'); ?>")</small></li>
+                 </ul></p>
+              </td>
+           </tr>
         </table>
         <input type="hidden" name="action" value="update" />
         <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template" />
