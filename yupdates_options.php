@@ -55,12 +55,7 @@ function yupdates_plugin_options() {
 <!--
 function switchMenu(obj) {
 	var el = document.getElementById(obj);
-	if ( el.style.display != "none" ) {
-		el.style.display = 'none';
-	}
-	else {
-		el.style.display = '';
-	}
+	el.style.display = (el.style.display != "none") ? 'none' : '';
 }
 //-->
 </script>
@@ -121,7 +116,7 @@ Enter your API Key, Shared Secret, and App ID from the Yahoo! Developer Network.
 	<p><img src="<?php echo get_option('siteurl'); ?>/wp-content/plugins/yupdates-wordpress/images/auth_step4_apikey.png"></p></li>
 
 	<li><p class="authStep"><strong>If you haven't done so previously, verify 
-		ownership of your domain with Yahoo! by creating a file of a specific 
+		ownership of your domain with Yahoo! by creating a file with the specified 
 		name and uploading that to the root directory of your domain.</strong></p></li>
 	
 	<li><p class="authStep"><strong>Once you've successfully created your API 
@@ -138,10 +133,15 @@ Enter your API Key, Shared Secret, and App ID from the Yahoo! Developer Network.
             <tr valign="top">
 				<th scope="row">Customize your Yahoo! Updates event display:</th>
 				<td>
-					<p>&lt;Your Yahoo! name&gt;<input type="text" size="50" name="yupdates_title_template" value="<?php echo $title_template; ?>" /><br /><small>Use the following tags in the display field above:</small><br /><ul>
-<li><small>"#blog_title" = the title of your blog post</small></li>
-<li><small>"#blog_name" = the name of your blog (i.e. "<?php bloginfo('name'); ?>")</small></li>
-</ul></p>
+					<p>&lt;Your Yahoo! name&gt;<input type="text" size="50" name="yupdates_title_template" value="<?php echo $title_template; ?>" />
+						<br />
+						<small>Use the following tags in the display field above:</small>
+						<br />
+						<ul>
+							<li><small>"#blog_title" = the title of your blog post</small></li>
+							<li><small>"#blog_name" = the name of your blog (i.e. "<?php bloginfo('name'); ?>")</small></li>
+						</ul>
+					</p>
 				</td>
 			</tr>
         </table>
