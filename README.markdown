@@ -15,7 +15,7 @@ License
 @copyright: Copyrights for code authored by Yahoo! Inc. is licensed under the following terms:
 @license:   BSD Open Source License
 
-Yahoo! Updates Wordpress Plugin
+Yahoo! Updates WordPress Plugin
 Software License Agreement (BSD License)
 Copyright (c) 2009, Yahoo! Inc.
 All rights reserved.
@@ -50,12 +50,25 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-The Yahoo! Updates Wordpress Plugin code is subject to the BSD license, see the LICENSE file.
+The Yahoo! Updates WordPress Plugin code is subject to the BSD license, see the LICENSE file.
 
 
 Requirements
 ============
-
+ * A WordPress installation located on a non *.wordpress.com domain, or the ability to access & modify files at the root of a domain.
+ * A web server running PHP 5+.
+ * yos-social-php5 - http://github.com/yahoo/yos-social-php5/
 
 Installation
 ============
+
+Manual Installation
+=====
+* Download and unpack the [yos-social-php5](http://github.com/yahoo/yos-social-php5/) and [yos-updates-wordpress](https://github.com/yahoo/yos-updates-wordpress/) release. 
+* After downloading and unpacking both release packages, copy the contents of the SDK at 'yos-social-php5/lib'
+to 'yos-updates-wordpress/lib' to install the SDK. A combination install is only available from the WordPress plugin directory.
+* Upload the 'yos-updates-wordpress' directory to the 'wp-content/plugins' directory of your WordPress installation.
+* After installation, configure the plugin according to the instructions provided in the WordPress admin dashboard.
+
+Plugin Directory
+=====
