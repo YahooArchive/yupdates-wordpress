@@ -43,7 +43,7 @@ function yupdates_edit_post($postid) {
 function yupdates_publish_post($postid) {
 	$session = yupdates_get_session();
 	
-    if($session->hasSession) {
+	if($session->hasSession) {
 		$post = get_post($postid);
 		
 		$title_template = get_option("yupdates_title_template");

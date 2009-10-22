@@ -106,11 +106,11 @@ function yupdates_yahoo_updates_widget_control() {
 			$count = $newCount;
 		}
 	}
-?>
-    <p><label for="yupdates-widget-count">Number of Updates to Display: 
-	<input type="text" id="yupdates-widget-count" name="yupdateswidgetcount" size="2" value="<?php echo $count; ?>"></label></p>
-    <input type="hidden" name="yupdateswidgetsubmit" value="1">
-<?php
+	echo <<<HTML
+ <p><label for="yupdates-widget-count">Number of Updates to Display: 
+ <input type="text" id="yupdates-widget-count" name="yupdateswidgetcount" size="2" value="$count"></label></p>
+ <input type="hidden" name="yupdateswidgetsubmit" value="1">
+HTML;
 }
 
 if(YUPDATES_WIDGET_ENABLED) {

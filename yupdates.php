@@ -63,9 +63,9 @@ Author URI: http://www.yahoo.com/
 	add_action("admin_menu", "yupdates_plugin_menu");
 	add_action("init", "yupdates_auth_init");
 	
-	add_action("delete_post", "yupdates_delete_post");
-	add_action("edit_post", "yupdates_edit_post");
 	add_action("publish_post", "yupdates_publish_post");
+	// add_action("delete_post", "yupdates_delete_post");
+	// add_action("edit_post", "yupdates_edit_post");
 ?>
 <?php
 	function yupdates_plugin_menu() {
@@ -93,11 +93,13 @@ Author URI: http://www.yahoo.com/
 				$request_token = $session->store->fetchRequestToken();
 				if(is_null($request_token->key) && !is_null($request_token->oauth_problem)) {
 					add_action("admin_notices", "yupdates_requestTokenProblem_warning");
+				} else if(stripos($_SERVER["REQUEST_URI"], USER_MENU_URI) === FALSE) {
+					add_action("admin_notices", "yupdates_authorization_warning");
 				}
-			} else if($session->store->hasAccessToken()) {
-				
 			} else if(yupdatesdb_hasApplicationInfo() && stripos($_SERVER["REQUEST_URI"], USER_MENU_URI) === FALSE ) {
 				add_action("admin_notices", "yupdates_authorization_warning");
+			} else if($session->store->hasAccessToken()) {
+				// do nothing, we're all set.
 			}
 		}
 		
@@ -111,7 +113,8 @@ Author URI: http://www.yahoo.com/
 	function yupdates_requestTokenProblem_warning() {
 		$session_store = yupdates_get_currentUserSessionStore();
 		$token = $session_store->fetchRequestToken();
-		$oauth_problem = $token->oauth_problem;
+		$oauth_problem = !is_null($token->oauth_problem) ? $token->oauth_problem : "Unknown Error";
+		
 		echo <<<HTML
 <div id="yupdates-authorization-warning" class="updated fade">
 	<p><strong>OAuth Error: Request token $oauth_problem. <a href="options-general.php?page=yupdates_plugin_options#settings">Re-configure the plugin.</a></strong></p>
