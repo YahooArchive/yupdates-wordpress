@@ -50,6 +50,8 @@ function yupdates_plugin_options() {
 	$ck = get_option('yupdates_consumer_key');
 	$cks = get_option('yupdates_consumer_secret');
 	$appid = get_option('yupdates_application_id');
+	$bitly_key = get_option("yupdates_bitly_apiKey"); 
+	$bitly_login = get_option("yupdates_bitly_login");
 	$title_template = get_option('yupdates_title_template');
 	
 	if($title_template == "") $title_template = "posted '#blog_title' on their WordPress blog '#blog_name'";
@@ -99,8 +101,8 @@ and write data on your behalf without revealing your Yahoo! ID and password).
             </tr>
 	</table>
 
-	<p><em>Don't know what these are, or how to get them?</em> <a onclick="switchDisplay('ydnhelp');" title="Switch the Menu">S
-		how/hide instructions for how to get a Yahoo! API key.</a> (It's quick and free.)</p>
+	<p><em>Don't know what these are, or how to get them?</em> <a onclick="switchDisplay('ydnhelp');" title="Switch the Menu">
+		Show/hide instructions for how to get a Yahoo! API key.</a> (It's quick and free.)</p>
 
 	<div id="ydnhelp" style="display:none; border: 1px solid #cccccc; margin: 10px; padding: 20px;">
 
@@ -144,8 +146,8 @@ and write data on your behalf without revealing your Yahoo! ID and password).
 	</ol>
 </div>
 
-<hr noshade="noshade" />
-	<h3 class="authTitle">Yahoo! Updates Settings</h3>
+		<hr noshade="noshade" />
+		<h3 class="authTitle">Yahoo! Updates Settings</h3>
 	    <table class="form-table">
            <tr valign="top">
               <th scope="row">Customize your Yahoo! Updates event display:</th>
@@ -161,8 +163,27 @@ and write data on your behalf without revealing your Yahoo! ID and password).
               </td>
            </tr>
         </table>
+
+		<hr noshade="noshade" />
+		<h3 class="authTitle">bit.ly Settings (optional)</h3>
+		Configure your <a href="http://bit.ly/account/">bit.ly account</a>. This allows us to shorten the link 
+		back to your blog posts in the update, and allows you to track clicks in <a href="http://bit.ly/app/history/">your history</a>:
+		<?php if($bitly_key && $bitly_login) { ?>
+		<br/>To stop using bit.ly, just remove your credentials below and save.
+		<?php } ?>
+	        <table class="form-table">
+	            <tr valign="top">
+	                <th scope="row">bit.ly API Key</th>
+	                <td><input type="text" size="64" name="yupdates_bitly_apiKey" value="<?php echo $bitly_key; ?>" /></td>
+	            </tr>
+	            <tr valign="top">
+	                <th scope="row">bit.ly Username</th>
+	                <td><input type="text" size="20" name="yupdates_bitly_login" value="<?php echo $bitly_login; ?>" /></td>
+	            </tr>
+		</table>
+
         <input type="hidden" name="action" value="update" />
-        <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template" />
+        <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template,yupdates_bitly_apiKey,yupdates_bitly_login" />
         <p class="submit">
             <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
         </p>

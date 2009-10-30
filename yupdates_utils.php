@@ -139,6 +139,38 @@
 		
 		return $session;
 	}
+	
+	function yupdates_get_bitly_options() {
+		$options = new stdclass();
+		$options->apiKey = get_option("yupdates_bitly_apiKey"); 
+		$options->login = get_option("yupdates_bitly_login"); 
+		
+		return $options;
+	}
+	
+	function yupdates_bitly_shorten($permalink, $apiKey, $login) {
+		$params = array();
+		$params["apiKey"] = $apiKey;
+		$params["login"] = $login;
+		$params["longUrl"] = $permalink;
+		$params["version"] = "2.0.1";
+		$params["history"] = "1";
+
+		$base_url = "http://api.bit.ly/shorten";
+
+		$http = YahooCurl::fetch($base_url, $params);
+		$rsp = $http["response_body"];
+		$data = json_decode($rsp);
+
+		if($data && $data->statusCode == "OK" && $data->results) {
+			$results = get_object_vars($data->results);
+			$site = $results[$permalink];
+			$shortUrl = $site->shortUrl;
+			return $shortUrl;
+		} else {
+			return $permalink;
+		}
+	}
 
 	function yupdates_close_popup() {
 ?>

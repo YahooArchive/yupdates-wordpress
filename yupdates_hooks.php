@@ -45,6 +45,13 @@ function yupdates_publish_post($postid) {
 	
 	if($session->hasSession) {
 		$post = get_post($postid);
+		$permalink = get_permalink($postid);
+		
+		$bitly_options = yupdates_get_bitly_options();
+		if($bitly_options->apiKey && $bitly_options->login) {
+			$bitly_permalink = yupdates_bitly_shorten($permalink, $bitly_options->apiKey, $bitly_options->login);
+			$permalink = $bitly_permalink;
+		}
 		
 		$title_template = get_option("yupdates_title_template");
 		$title_patterns = array('/#blog_title/', '/#blog_name/');
@@ -53,7 +60,7 @@ function yupdates_publish_post($postid) {
 		$update = new stdclass();
 		$update->title = preg_replace($title_patterns, $title_replacements, $title_template);
 		$update->description = substr($post->post_content, 0, 256);
-		$update->link = get_bloginfo("url");	
+		$update->link = $permalink;
 		
 		$response = $session->application->insertUpdate(null, $update->description, $update->title, $update->link);
 		
