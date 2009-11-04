@@ -50,6 +50,7 @@
 		} 
 		else if($session->store->hasRequestToken()) 
 		{
+			yupdates_get_requestToken($session);
 			$request_token = $session->store->fetchRequestToken();
 			
 			if(!$request_token->key || !$request_token->secret) {
