@@ -64,9 +64,9 @@ Installation
 
 ## Manual Installation
 
-* Download and unpack the [yos-social-php5](http://github.com/yahoo/yos-social-php5/) and [yos-updates-wordpress](https://github.com/yahoo/yos-updates-wordpress/) release. 
-* After downloading and unpacking both release packages, copy the contents of the SDK at 'yos-social-php5/lib'
-to 'yos-updates-wordpress/lib' to install the SDK. A combination install is only available from the WordPress plugin directory.
+* Download and unpack the [yos-social-php5](http://github.com/yahoo/yos-social-php5/) and [yos-updates-wordpress](https://github.com/yahoo/yos-updates-wordpress/) source code releases. 
+* After downloading and unpacking both packages, copy the contents of the SDK at 'yos-social-php5/lib'
+to 'yos-updates-wordpress/lib' to install the SDK. A combination install containing all required files is only available from the WordPress plugin directory. (This is our development repository)
 * Upload the 'yos-updates-wordpress' directory to the 'wp-content/plugins' directory of your WordPress installation.
 * After installation, configure the plugin according to the instructions provided in the WordPress admin dashboard.
 
