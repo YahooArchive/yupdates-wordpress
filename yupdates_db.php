@@ -40,6 +40,7 @@ define("YUPDATES_WIDGET_COUNT_OPTION", "yupdates_widget_count");
 define("YUPDATES_TITLE_TEMPLATE_OPTION", "yupdates_title_template");
 
 $updateUsers = get_option(YUPDATES_USER_OPTION);
+
 if(is_bool($updateUsers) && !$updateUsers) {
     $updateUsers = array();
 }

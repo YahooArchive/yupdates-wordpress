@@ -45,16 +45,33 @@ if ( ! defined( 'WP_PLUGIN_URL' ) )
 if ( ! defined( 'WP_PLUGIN_DIR' ) )
    define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
+define('YUPDATES_DEFAULT_TITLE_TEMPLATE', "posted '#blog_title' on their WordPress blog '#blog_name'");
 
 function yupdates_plugin_options() {
-	$ck = get_option('yupdates_consumer_key');
-	$cks = get_option('yupdates_consumer_secret');
-	$appid = get_option('yupdates_application_id');
-	$bitly_key = get_option("yupdates_bitly_apiKey"); 
-	$bitly_login = get_option("yupdates_bitly_login");
-	$title_template = get_option('yupdates_title_template');
+	$session = yupdates_get_session();
 	
-	if($title_template == "") $title_template = "posted '#blog_title' on their WordPress blog '#blog_name'";
+	// oauth keys
+	$consumer_key = $session->application->consumer_key;
+	$consumer_secret = $session->application->consumer_secret;
+	$appid = $session->application->application_id;
+	
+	$has_application = ($consumer_key && $consumer_secret && $appid);
+	
+	// extAuth options
+	$extAuth_host = $_SERVER["HTTP_HOST"];
+	$extAuth_application_url = get_bloginfo('wpurl');
+	$extAuth_third_party = $extAuth_host;
+	$extAuth_scopes = 'yurw';
+	$extAuth_title = sprintf("WordPress plugin for %s", $extAuth_application_url);
+	$extAuth_description = sprintf("This application powers the updates plugin for your WordPress blog on %s", $extAuth_host);
+	$extAuth_return_to_url = sprintf("%s/plugins/yupdates_wordpress/yupdates_application.php", WP_CONTENT_URL);
+	$extAuth_favicon_url = sprintf("http://%s/favicon.ico", $extAuth_host);
+	
+	// blog options
+	$title_template_opt = get_option('yupdates_title_template');
+	$title_template = ($title_template_opt) ? $title_template_opt : YUPDATES_DEFAULT_TITLE_TEMPLATE;
+	$bitly_key = get_option("yupdates_bitly_apiKey");
+	$bitly_login = get_option("yupdates_bitly_login");
 ?>
 <style type="text/css">
 	.authTitle {
@@ -64,6 +81,7 @@ function yupdates_plugin_options() {
 		font-weight: bold;
 	}
 </style>
+
 <script type="text/javascript">
 <!--
 function switchDisplay(obj) {
@@ -72,123 +90,128 @@ function switchDisplay(obj) {
 }
 //-->
 </script>
+
 <div class="wrap">
-	
-	<a name="settings"></a>
-	
-    <form method="post" action="options.php">
-<?php 
-	if(function_exists("wp_nonce_field")) {
-		wp_nonce_field('update-options'); 
-	}
+	<a name="application_settings"></a>
+   <h3 class="authTitle">Create a Yahoo! Application</h3>
+<?php
+  if($has_application == FALSE):
 ?>
-	
-	<h3 class="authTitle">Yahoo! API Access Settings</h3>
-Enter your API Key, Shared Secret, and App ID from the Yahoo! Developer Network. (These are needed so your WordPress blog can read 
-and write data on your behalf without revealing your Yahoo! ID and password). 
-        <table class="form-table">
-            <tr valign="top">
-                <th scope="row">Yahoo! API Key</th>
-                <td><input type="text" size="64" name="yupdates_consumer_key" value="<?php echo $ck; ?>" /></td>
-            </tr>
-            <tr valign="top">
-                <th scope="row">Yahoo! Shared Secret</th>
-                <td><input type="text" size="64" name="yupdates_consumer_secret" value="<?php echo $cks; ?>" /></td>
-            </tr>
-            <tr valign="top">
-                <th scope="row">Yahoo! Application ID</th>
-                <td><input type="text" size="20" name="yupdates_application_id" value="<?php echo $appid; ?>" /></td>
-            </tr>
-	</table>
-
-	<p><em>Don't know what these are, or how to get them?</em> <a onclick="switchDisplay('ydnhelp');" title="Switch the Menu">
-		Show/hide instructions for how to get a Yahoo! API key.</a> (It's quick and free.)</p>
-
-	<div id="ydnhelp" style="display:none; border: 1px solid #cccccc; margin: 10px; padding: 20px;">
-
-	<h4 class="authTitle">How to get a Yahoo! API Key</h4>
-	<ol>
-		<li><p>Go to the <a href="https://developer.apps.yahoo.com/dashboard/createKey.html" target="_new"> 
-			Yahoo! Developer Network</a> to register for an API key, and complete 
-			the form with the following information:</p>
-			<ol>
-				<li type="a"><strong>Application Name:</strong> Enter "<?php bloginfo('name'); ?>"</li>
-				<li type="a"><strong>Kind of Application:</strong> Choose "Web-based"</li>
-				<li type="a"><strong>Description:</strong> Describe your site here.</li>
-				<li type="a"><strong>Application URL:</strong> Enter "<?php bloginfo('url'); ?>"</li>
-				<li type="a"><strong>Favicon URL:</strong> Provide the URL to a GIF, JPG or PNG image (note: ICO is <em>not</em> supported) 
-					to serve as the favicon for your blog, if you have one. This will be used if you 
-					generate a Yahoo! Update with each blog post.
-					<br />
-					(e.g. <img src="<?php echo WP_CONTENT_URL; ?>/plugins/yupdates-wordpress/images/favicon.png" width="16" height="16" align="bottom" /> John posted "My First iPhone Experiences" from his blog: Mac User Fans. )
-				</li>
-				<li type="a"><strong>Application Domain:</strong> Enter "<?php echo sprintf("http://%s", $_SERVER['HTTP_HOST']) ?>"</li>
-			</ol>
-		 </li>
-	
-		<li><p class="authStep"><strong>Choose access to private user data.</strong></p>
-			<p><img src="<?php echo WP_CONTENT_URL; ?>/plugins/yupdates-wordpress/images/auth_step2_scopes.png"></p>
-		</li>
-		<li><p class="authStep"><strong>Choose Read/Write access to Yahoo! Updates.</strong></td>
-			<p><img src="<?php echo WP_CONTENT_URL; ?>/plugins/yupdates-wordpress/images/auth_step3_read-write.png"></p>
-		</li>
-		<li><p class="authStep"><strong>Agree to the Yahoo! Terms of Use, and click the "Get API Key" button.</strong></p>
-			<p><img src="<?php echo WP_CONTENT_URL; ?>/plugins/yupdates-wordpress/images/auth_step4_apikey.png"></p>
-		</li>
-		<li><p class="authStep"><strong>If you haven't done so previously, verify 
-			ownership of your domain with Yahoo! by creating a file with the specified 
-			name and uploading that to the root directory of your domain.</strong></p>
-		</li>
-		<li><p class="authStep"><strong>Once you've successfully created your API 
-			key, copy your API key information from the success screen (sample below) to the Yahoo! API Access Settings below:</strong></p>
-			<p><img src="<?php echo WP_CONTENT_URL; ?>/plugins/yupdates-wordpress/images/auth_step6_success.png" width="562" height="233"></p>
-		</li>
-	</ol>
-</div>
-
-		<hr noshade="noshade" />
-		<h3 class="authTitle">Yahoo! Updates Settings</h3>
-	    <table class="form-table">
-           <tr valign="top">
-              <th scope="row">Customize your Yahoo! Updates event display:</th>
-              <td>
-                 <p>&lt;Your Yahoo! name&gt;<input type="text" size="50" name="yupdates_title_template" value="<?php echo $title_template; ?>" />
-                 <br />
-                 <small>Use the following tags in the display field above:</small>
-                 <br />
-                 <ul>
-                    <li><small>"#blog_title" = the title of your blog post</small></li>
-                    <li><small>"#blog_name" = the name of your blog (i.e. "<?php bloginfo('name'); ?>")</small></li>
-                 </ul></p>
-              </td>
-           </tr>
-        </table>
-
-		<hr noshade="noshade" />
-		<h3 class="authTitle">bit.ly Settings (optional)</h3>
-		Configure your <a href="http://bit.ly/account/">bit.ly account</a>. This allows us to shorten the link 
-		back to your blog posts in the update, and allows you to track clicks in <a href="http://bit.ly/app/history/">your history</a>:
-		<?php if($bitly_key && $bitly_login) { ?>
-		<br/>To stop using bit.ly, just remove your credentials below and save.
-		<?php } ?>
-	        <table class="form-table">
-	            <tr valign="top">
-	                <th scope="row">bit.ly API Key</th>
-	                <td><input type="text" size="64" name="yupdates_bitly_apiKey" value="<?php echo $bitly_key; ?>" /></td>
-	            </tr>
-	            <tr valign="top">
-	                <th scope="row">bit.ly Username</th>
-	                <td><input type="text" size="20" name="yupdates_bitly_login" value="<?php echo $bitly_login; ?>" /></td>
-	            </tr>
+    <p>In order to get started, you'll need to create a new Yahoo! Application and later authorize it to access your Yahoo! account. 
+      (This is needed so your WordPress blog can read and write updates on your behalf without you revealing your Yahoo! ID and password).</p>
+    <p>We've filled in the required fields below, click 'Create Application' below to submit.</p>
+    <div id="yupdates_app_setup">
+<? else: ?>
+    <p>Hey, it looks like you've already set up an application. Awesome! <a onclick="switchDisplay('yupdates_app_setup');" title="Switch the Menu">Here's the form</a> in case you need it again.</p>
+    <div id="yupdates_app_setup" style="display:none;">
+<? endif; ?>
+     <form method="post" action="http://soldsomeheat-vm0.corp.yahoo.com/projects/extAuth" id="yahoo_extAuthForm" name="yahoo_extAuthForm" target="yahoo_extAuthWindow">
+		<table class="form-table">
+			<tr valign="top">
+				<th scope="row">Yahoo! Application Name</th>
+				<td><input type="text" size="64" name="name" value="<?php echo $extAuth_title; ?>" /></td>
+			</tr>
+			<tr valign="top">
+				<th scope="row">Yahoo! Application Description</th>
+				<td><input type="text" size="64" name="description" value="<?php echo $extAuth_description; ?>" /></td>
+			</tr>
+			<tr valign="top">
+				<th scope="row">Favicon URL</th>
+				<td><input type="text" size="35" name="favicon" value="<?php echo $extAuth_favicon_url; ?>" /></td>
+			</tr>
 		</table>
-
-        <input type="hidden" name="action" value="update" />
-        <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template,yupdates_bitly_apiKey,yupdates_bitly_login" />
-        <p class="submit">
-            <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
-        </p>
+		
+		<input type="hidden" name="third_party" value="<?php echo $extAuth_third_party; ?>"/>
+		<input type="hidden" name="return_to" value="<?php echo $extAuth_return_to_url; ?>"/>
+		<input type="hidden" name="scopes" value="<?php echo $extAuth_scopes; ?>"/>
+		<input type="hidden" name="application_url" value="<?php echo $extAuth_application_url ?>">
+		<input type="hidden" name="domain" value="<?php echo $extAuth_host ?>">
+		
+		<p id="createApp" class="submit"><input type="submit" name="Submit" value="<?php _e('Create Application') ?>"/></p>
     </form>
+   </div>
+   <hr noshade="noshade" />
+
+   <a name="settings"></a>
+   <h3 class="authTitle">Yahoo! Updates Settings</h3>
+	
+   <form method="post" action="options.php">
+      <table class="form-table">
+	       <tr valign="top">
+	          <th scope="row">Customize your Yahoo! Updates event display:</th>
+	          <td>
+	             &lt;Your Yahoo! name&gt;<input type="text" size="50" name="yupdates_title_template" value="<?php echo $title_template; ?>" />
+	             <br />
+	             <small>Use the following tags in the display field above:</small>
+	             <br />
+	             <ul>
+	                <li><small>"#blog_title" = the title of your blog post</small></li>
+	                <li><small>"#blog_name" = the name of your blog (i.e. "<?php bloginfo('name'); ?>")</small></li>
+	             </ul>
+	          </td>
+	       </tr>
+	   </table>
+
+		<hr noshade="noshade" />
+		
+		<h3 class="authTitle">bit.ly Settings (optional)</h3>
+		<p>Configure your <a href="http://bit.ly/account/">bit.ly account</a>. This allows us to shorten the link 
+		back to your blog posts in the update, and allows you to track clicks in <a href="http://bit.ly/app/history/">your history</a>:</p>
+		<?php if($bitly_key && $bitly_login): ?>
+			<br/>To stop using bit.ly, just remove your credentials below and save.
+		<?php endif; ?>
+		<table class="form-table">
+			<tr valign="top">
+				<th scope="row">bit.ly API Key</th>
+				<td><input type="text" size="64" name="yupdates_bitly_apiKey" value="<?php echo $bitly_key; ?>" /></td>
+			</tr>
+			<tr valign="top">
+				<th scope="row">bit.ly Username</th>
+				<td><input type="text" size="20" name="yupdates_bitly_login" value="<?php echo $bitly_login; ?>" /></td>
+			</tr>
+		</table>
+		
+		<input type="hidden" id="yupdates_consumer_key" name="yupdates_consumer_key" value="<?php echo $consumer_key; ?>"/>
+		<input type="hidden" id="yupdates_consumer_secret" name="yupdates_consumer_secret" value="<?php echo $consumer_secret; ?>"/>
+		<input type="hidden" id="yupdates_application_id" name="yupdates_application_id" value="<?php echo $appid; ?>"/>
+		
+		<input type="hidden" name="action" value="update" />
+		<input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template,yupdates_bitly_apiKey,yupdates_bitly_login" />
+		<?php if(function_exists("wp_nonce_field")) wp_nonce_field('update-options'); ?>
+		
+		<p class="submit"><input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" class="button-primary"/></p>
+	</form>
 </div>
+<script type="text/javascript">
+<!--
+function yupdates_setCredentials(consumer_key, consumer_secret, application_id) {
+	_gel('yupdates_consumer_key').value = consumer_key;
+	_gel('yupdates_consumer_secret').value = consumer_secret;
+	_gel('yupdates_application_id').value = application_id;
+		
+	var updated = document.createElement('div');
+   updated.className = "updated fade";
+   
+   if(consumer_key && consumer_secret && application_id) {
+     updated.innerHTML = "<p><strong>Thanks! Click '<?php _e('Save Changes'); ?>' below to continue.</strong></p>";
+   } else {
+     updated.innerHTML = "<p><strong>Houston, we have a problem. Missing required keys from extAuth response.";
+     updated.innerHTML+= "consumer_key = '"+consumer_key+"', consumer_secret = '"+consumer_secret+"', application_id = '"+application_id+"'</strong></p>";
+   }
+   
+   _gel('createApp').appendChild(updated);
+}
+
+function _gel(id) {
+   return document.getElementById(id);
+}
+
+function switchDisplay(obj) {
+	var el = document.getElementById(obj);
+	el.style.display = (el.style.display != "none") ? 'none' : '';
+}
+//-->
+</script>
 <?
 }
 ?>

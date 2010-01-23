@@ -32,7 +32,7 @@
  *   THE SOFTWARE.
  **/
 
-	class WordPressSessionStore {
+class WordPressSessionStore {
 	var $optionName = NULL;
 	var $option = NULL;
 	var $consumerKey = "";
@@ -59,8 +59,9 @@
 	{
 		if($this->consumerKey != $this->option["ck"]) {
 			$this->resetOption();
-			return FALSE;
+			return false;
 		}
+		
 		return true;
 	}
 
