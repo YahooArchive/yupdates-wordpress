@@ -36,10 +36,10 @@
  **/
 
 function yupdates_plugin_application() {
-	$application_id = $_GET['appid'];
-	$consumer_key = $_GET['key'];
-	$consumer_secret = $_GET['secret'];
-   
+   $application_id = $_GET['appid'];
+   $consumer_key = $_GET['key'];
+   $consumer_secret = $_GET['secret'];
+
    echo <<<HTML
 <script type="text/javascript">
 var opener = parent.opener;

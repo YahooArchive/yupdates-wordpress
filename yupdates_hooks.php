@@ -34,45 +34,47 @@
  *   THE SOFTWARE.
  **/
 
-function yupdates_delete_post($postid) {
+function yupdates_delete_post($postid) 
+{
 	// TODO
 }
 
-function yupdates_edit_post($postid) {
+function yupdates_edit_post($postid) 
+{
 	// TODO
 }
 
-function yupdates_publish_post($postid) {
-	$session = yupdates_get_session();
+function yupdates_publish_post($postid) 
+{
+   $session = yupdates_get_session();
 	
-	if($session->hasSession) {
-		$post = get_post($postid);
-		$permalink = get_permalink($postid);
+   if($session->hasSession) {
+      $post = get_post($postid);
+      $permalink = get_permalink($postid);
 		
-		$bitly_options = yupdates_get_bitly_options();
-		if($bitly_options->apiKey && $bitly_options->login) {
-			$bitly_permalink = yupdates_bitly_shorten($permalink, $bitly_options->apiKey, $bitly_options->login);
-			$permalink = $bitly_permalink;
-		}
+      $bitly_options = yupdates_get_bitly_options();
+      if($bitly_options->apiKey && $bitly_options->login) {
+         $bitly_permalink = yupdates_bitly_shorten($permalink, $bitly_options->apiKey, $bitly_options->login);
+         $permalink = $bitly_permalink;
+      }
+      
+      $title_template = get_option("yupdates_title_template");
+      $title_patterns = array('/#blog_title/', '/#blog_name/');
+      $title_replacements = array($post->post_title, get_bloginfo("name"));
+      
+      $update = new stdclass();
+      $update->title = preg_replace($title_patterns, $title_replacements, $title_template);
+      $update->description = substr($post->post_content, 0, 256);
+      $update->link = $permalink;
 		
-		$title_template = get_option("yupdates_title_template");
-		$title_patterns = array('/#blog_title/', '/#blog_name/');
-		$title_replacements = array($post->post_title, get_bloginfo("name"));
+      $response = $session->application->insertUpdate(null, $update->description, $update->title, $update->link);
 		
-		$update = new stdclass();
-		$update->title = preg_replace($title_patterns, $title_replacements, $title_template);
-		$update->description = substr($post->post_content, 0, 256);
-		$update->link = $permalink;
-		
-		$response = $session->application->insertUpdate(null, $update->description, $update->title, $update->link);
-		
-		// todo: do better error handling
-		if(is_null($response)) {
-			error_log("Failed to generate Yahoo! Update for blog post.");
-		}
-	} else {
-		error_log('no session available');
-	}
+      // todo: do better error handling
+      if(is_null($response)) {
+         error_log("Failed to generate Yahoo! Update for blog post.");
+      }
+   } else {
+      error_log('no session available');
+   }
 }
-
 ?>

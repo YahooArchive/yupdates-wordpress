@@ -35,59 +35,56 @@
  **/
 
 function yupdates_menu() {
-	global $current_user;
-	get_currentuserinfo();
+   global $current_user;
+   get_currentuserinfo();
+   
+   if(array_key_exists("yupdates_updateusers", $_REQUEST)) {
+      if($_REQUEST["yupdates_include_updates"]) {
+         yupdatesdb_addUpdatesUser($current_user->user_login);
+      } else {
+         yupdatesdb_removeUpdatesUser($current_user->user_login);
+      }
+   }
 	
-	if(array_key_exists("yupdates_updateusers", $_REQUEST)) {
-		if($_REQUEST["yupdates_include_updates"]) {
-			yupdatesdb_addUpdatesUser($current_user->user_login);
-		}
-		else {
-			yupdatesdb_removeUpdatesUser($current_user->user_login);
-		}
-	}
+   $session = yupdates_get_session();
+   $sharingUpdates = false;
 	
-	$session = yupdates_get_session();
-	$sharingUpdates = false;
-	
-	if($session->hasSession == false) {
-		$request_token = $session->store->fetchRequestToken();
-		$auth_url = ($request_token && $request_token->key) ? $session->application->getAuthorizationUrl($request_token) : "";
-	} else {
-		$sharingUpdates = yupdatesdb_isUpdatesUser($current_user->user_login);
-	}
-	
+   if($session->hasSession == false) {
+      $request_token = $session->store->fetchRequestToken();
+      $auth_url = ($request_token && $request_token->key) ? $session->application->getAuthorizationUrl($request_token) : "";
+   } else {
+      $sharingUpdates = yupdatesdb_isUpdatesUser($current_user->user_login);
+   }
 ?>
 
 <div class="wrap">
     <h2>Yahoo! Updates</h2>
 
 <?php 
-	if($session->application && $session->hasSession) { 
-		echo <<<HTML
+   if($session->application && $session->hasSession) { 
+      echo <<<HTML
 You have already authorized the Yahoo! Updates plugin.
 <form method="post">
 HTML;
-		
-		if(YUPDATES_WIDGET_ENABLED) { 
+      
+      if(YUPDATES_WIDGET_ENABLED) { 
 			$checked = $sharingUpdates ? "checked='checked'" : "";
 			echo <<<HTML
 <p><label for="yupdates-include-updates">Include updates in widget? <input id="yupdates-include-updates" type="checkbox" name="yupdates_include_updates" $checked></label></p>
 <input type="submit" name="yupdates_updateusers" value="Update">
 HTML;
 		} 
-
-		echo <<<HTML
+		
+      echo <<<HTML
 <input type="submit" name="yupdates_clearauthorization" value="Unauthorize"></form>	
 HTML;
-	} else {
-		echo <<<HTML
+   } else {
+      echo <<<HTML
 You have not yet authorized the Yahoo! Updates plugin.
 <p><input type="hidden" name="yupdates_authorize" value="true"><input type="submit" value="Authorize" onclick="_yupdates_authorize();"></p>
 HTML;
 	}
 ?>
-
 </div>
 
 <script type="text/javascript">
