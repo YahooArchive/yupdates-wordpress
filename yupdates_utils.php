@@ -125,7 +125,7 @@ function yupdates_clear_session()
    }
    */
 
-   header(sprintf("Location: %s", get_bloginfo('url'));
+   header(sprintf("Location: %s", get_bloginfo('url')));
    exit();
 }
 
@@ -189,27 +189,19 @@ function yupdates_get_bitly_options()
 
 function yupdates_bitly_shorten($permalink, $apiKey, $login) 
 {
-   $base_url = "http://api.bit.ly/shorten";
-   $params = array(
-      'apiKey' => $apiKey,
-      'login' => $login,
-      'longUrl' => $permalink,
-      'version' => '2.0.1',
-      'history' => '1'
-   );
-
-   $http = YahooCurl::fetch($base_url, $params);
-
-   $rsp = $http["response_body"];
-   $data = json_decode($rsp);
-
-   if($data && $data->statusCode == "OK" && isset($data->results)) {
-      $results = get_object_vars($data->results);
-      $site = $results[$permalink];
-
-      if($site && isset($site->shortUrl)) {
-         $shortUrl = $site->shortUrl;
-         return $shortUrl;
+   $query = "SELECT statusCode, results FROM bit.ly.shorten where login='%s' and apiKey='%s' and longUrl='%s' and history='1'";
+   $query = sprintf($query, $login, $apiKey, $permalink);
+   
+   $session = yupdates_get_session();
+   $rsp = $session->application->yql($query);
+   
+   $bitly = $rsp->query->results->bitly;
+   
+   if($bitly && $bitly->statusCode == 'OK' && isset($bitly->results)) {
+      $results = $bitly->results->nodeKeyVal;
+      
+      if($results && isset($results->shortUrl)) {
+         return $results->shortUrl;
       }
    }
 

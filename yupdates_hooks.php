@@ -59,18 +59,22 @@ function yupdates_publish_post($postid)
       }
       
       $title_template = get_option("yupdates_title_template");
-      $title_patterns = array('/#blog_title/', '/#blog_name/');
+      $title_patterns = array('/%blog_title%/', '/%blog_name%/');
       $title_replacements = array($post->post_title, get_bloginfo("name"));
       
       $update = new stdclass();
       $update->title = preg_replace($title_patterns, $title_replacements, $title_template);
-      $update->description = substr($post->post_content, 0, 256);
+      $update->description = substr($post->post_excerpt, 0, 256);
       $update->link = $permalink;
 		
-      $response = $session->application->insertUpdate(null, $update->description, $update->title, $update->link);
+      $rsp = $session->application->insertUpdate(null, $update->description, $update->title, $update->link);
+		
+		// $query = "INSERT INTO social.updates (guid, title, description, link, pubDate, source, suid) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s');";
+      // $query = sprintf($query, $guid, $update->title, $update->description, $update->link, $pubDate, $source, $suid);
+      // $response = $session->application->yql($query);
 		
       // todo: do better error handling
-      if(is_null($response)) {
+      if(is_null($rsp)) {
          error_log("Failed to generate Yahoo! Update for blog post.");
       }
    } else {

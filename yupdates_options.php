@@ -41,7 +41,9 @@ if (!defined( 'WP_CONTENT_DIR')) define('WP_CONTENT_DIR', ABSPATH . 'wp-content'
 if (!defined( 'WP_PLUGIN_URL'))  define('WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
 if (!defined( 'WP_PLUGIN_DIR'))  define('WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
-define('YUPDATES_DEFAULT_TITLE_TEMPLATE', "posted '#blog_title' on their WordPress blog '#blog_name'");
+define('YUPDATES_DEFAULT_TITLE_TEMPLATE', "posted '%blog_title%' on their WordPress blog '%blog_name%'");
+define('YUPDATES_EXTAUTH_HOST', "http://soldsomeheat-vm0.corp.yahoo.com/projects/extAuth");
+define('YUPDATES_EXTAUTH_DEFAULT_SCOPES', "yurw");
 
 function yupdates_plugin_options() {
    $session = yupdates_get_session();
@@ -53,13 +55,13 @@ function yupdates_plugin_options() {
    
    $has_application = ($consumer_key && $consumer_secret && $appid);
 
-   // extAuth options
+   // extAuth application options
    $extAuth_host = $_SERVER["HTTP_HOST"];
    $extAuth_application_url = get_bloginfo('wpurl');
    $extAuth_title = get_bloginfo('name');
    $extAuth_description = get_bloginfo('description');
    $extAuth_third_party = $extAuth_host;
-   $extAuth_scopes = 'yurw';
+   $extAuth_scopes = YUPDATES_EXTAUTH_DEFAULT_SCOPES;
    $extAuth_return_to_url = sprintf("%s/plugins/yupdates_wordpress/yupdates_application.php", WP_CONTENT_URL);
    $extAuth_favicon_url = sprintf("http://%s/favicon.ico", $extAuth_host);
 
@@ -84,11 +86,11 @@ function yupdates_plugin_options() {
       <p>We've filled in the required fields below, click 'Create Application' below to submit.</p>
       <div id="yupdates_app_setup">
 <? else: ?>
-      <p>Hey, it looks like you've already set up your blog with Yahoo! Updates. Awesome! <a onclick="switchDisplay('yupdates_app_setup');" title="Switch the Menu">Here's the form</a> in case you need it again.</p>
+      <p>Hey, it looks like you've already set up your blog with Yahoo! Updates, awesome! <a onclick="switchDisplay('yupdates_app_setup');" title="Switch the Menu">Here's the form</a> if you'd like to update the application.</p>
       <div id="yupdates_app_setup" style="display:none;">
 <? endif; ?>
       
-      <form method="post" action="http://soldsomeheat-vm0.corp.yahoo.com/projects/extAuth" id="yahoo_extAuthForm" name="yahoo_extAuthForm" target="yahoo_extAuthWindow">
+      <form method="POST" action="<?php echo YUPDATES_EXTAUTH_HOST; ?>" id="yahoo_extAuthForm" name="yahoo_extAuthForm" target="yahoo_extAuthWindow">
          <table class="form-table">
             <tr valign="top">
                <th scope="row">Blog Name</th>
@@ -100,21 +102,23 @@ function yupdates_plugin_options() {
             </tr>
             <tr valign="top">
                <th scope="row">Favicon URL</th>
-               <td><input type="text" size="35" name="favicon" value="<?php echo $extAuth_favicon_url; ?>" /></td>
+               <td><input type="text" size="35" name="favicon" value="<?php echo $extAuth_favicon_url; ?>" />
+                  <br/><small>.ico files may not render correctly in IE</small></td>
             </tr>
          </table>
+         
          <input type="hidden" name="third_party" value="<?php echo $extAuth_third_party; ?>"/>
          <input type="hidden" name="return_to" value="<?php echo $extAuth_return_to_url; ?>"/>
          <input type="hidden" name="scopes" value="<?php echo $extAuth_scopes; ?>"/>
          <input type="hidden" name="application_url" value="<?php echo $extAuth_application_url ?>">
          <input type="hidden" name="domain" value="<?php echo $extAuth_host ?>">
+         <input type="hidden" name="appid" value="<?php echo $appid; ?>"/>
 		
-         <p id="createApp" class="submit"><input type="submit" name="Submit" value="<?php _e('Create Application') ?>"/></p>
+         <p id="createApp" class="submit"><input type="submit" name="Submit" value="<?php ($appid) ? _e('Update Application') : _e('Create Application') ?>"/></p>
       </form>
    </div>
    
    <hr noshade="noshade" />
-   
    <a name="settings"></a>
    
    <h3 class="authTitle">Yahoo! Updates Settings</h3>
@@ -125,12 +129,13 @@ function yupdates_plugin_options() {
             <td>&lt;Your Yahoo! name&gt;<input type="text" size="50" name="yupdates_title_template" value="<?php echo $title_template; ?>" />
                <br /><small>Use the following tags in the display field above:</small><br />
                <ul>
-                  <li><small>"#blog_title" = the title of your blog post</small></li>
-                  <li><small>"#blog_name" = the name of your blog (i.e. "<?php bloginfo('name'); ?>")</small></li>
+                  <li><small>"%blog_title%" = the title of your blog post</small></li>
+                  <li><small>"%blog_name%" = the name of your blog (i.e. "<?php echo $extAuth_title; ?>")</small></li>
                </ul>
             </td>
          </tr>
       </table>
+      
       <hr noshade="noshade" />
 		
       <h3 class="authTitle">bit.ly Settings (optional)</h3>
@@ -155,7 +160,6 @@ function yupdates_plugin_options() {
       <input type="hidden" id="yupdates_consumer_key" name="yupdates_consumer_key" value="<?php echo $consumer_key; ?>"/>
       <input type="hidden" id="yupdates_consumer_secret" name="yupdates_consumer_secret" value="<?php echo $consumer_secret; ?>"/>
       <input type="hidden" id="yupdates_application_id" name="yupdates_application_id" value="<?php echo $appid; ?>"/>
-      
       <input type="hidden" name="action" value="update" />
       <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template,yupdates_bitly_apiKey,yupdates_bitly_login" />
       <?php if(function_exists("wp_nonce_field")) wp_nonce_field('update-options'); ?>
