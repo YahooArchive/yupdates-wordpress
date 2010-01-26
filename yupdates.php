@@ -51,6 +51,7 @@ define("USER_MENU_URI","users.php?page=yupdates_menu");
 
 require_once("lib/OAuth/OAuth.php");
 require_once("lib/Yahoo/YahooOAuthApplication.class.php");
+require_once("lib/Yahoo/YahooYQLQuery.class.php");
 
 // require_once("yupdates_application.php");
 require_once("yupdates_sessionstore.php");

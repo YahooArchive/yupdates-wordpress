@@ -192,8 +192,9 @@ function yupdates_bitly_shorten($permalink, $apiKey, $login)
    $query = "SELECT statusCode, results FROM bit.ly.shorten where login='%s' and apiKey='%s' and longUrl='%s' and history='1'";
    $query = sprintf($query, $login, $apiKey, $permalink);
    
-   $session = yupdates_get_session();
-   $rsp = $session->application->yql($query);
+   // $session = yupdates_get_session();
+   $yql = new YahooYQLQuery();
+   $rsp = $yql->query($query);
    
    $bitly = $rsp->query->results->bitly;
    
