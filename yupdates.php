@@ -85,8 +85,9 @@ function yupdates_auth_init() {
    } else if(array_key_exists("auth_popup", $_REQUEST)) {
    	yupdates_close_popup();
    }
-
+   
    // show warnings 
+   
    if($session->hasSession == false) {
       if($session->store->hasRequestToken()) {
          $request_token = $session->store->fetchRequestToken();
@@ -95,14 +96,9 @@ function yupdates_auth_init() {
          } else if(stripos($_SERVER["REQUEST_URI"], USER_MENU_URI) === FALSE) {
             add_action("admin_notices", "yupdates_authorization_warning");
          }
-      }/* else if(yupdatesdb_hasApplicationInfo() && stripos($_SERVER["REQUEST_URI"], USER_MENU_URI) === FALSE ) {
-         echo "no request token";
+      } else if(yupdatesdb_hasApplicationInfo() && stripos($_SERVER["REQUEST_URI"], USER_MENU_URI) === FALSE ) {
          add_action("admin_notices", "yupdates_authorization_warning");
-      } else if($session->store->hasAccessToken()) {
-         // do nothing, we're all set now.
-      } else {
-         echo "no tokens!";
-      }*/
+      }
    }
 
    if(!yupdatesdb_hasApplicationInfo() && stripos($_SERVER["REQUEST_URI"], PLUGIN_OPTIONS_URI) === FALSE) {
