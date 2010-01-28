@@ -53,8 +53,8 @@ function yupdates_has_session($session)
    } 
    else if($session->store->hasRequestToken()) 
    {
-      $request_token = yupdates_get_requestToken($session);
-      // $request_token = $session->store->fetchRequestToken();
+      // $request_token = yupdates_get_requestToken($session);
+      $request_token = $session->store->fetchRequestToken();
       
       if(!$request_token->key || !$request_token->secret) {
          $session->store->clearRequestToken();
@@ -66,7 +66,7 @@ function yupdates_has_session($session)
       if(array_key_exists("oauth_token", $_REQUEST) && array_key_exists("oauth_verifier", $_REQUEST)) {
          $oauth_verifier = $_REQUEST["oauth_verifier"];
          $access_token = $session->application->getAccessToken($request_token, $oauth_verifier);
-         
+
          if($access_token->key && $access_token->secret) {
             $session->store->clearRequestToken();
             $session->store->storeAccessToken($access_token);
@@ -194,7 +194,7 @@ function yupdates_bitly_shorten($permalink, $apiKey, $login)
    
    // $session = yupdates_get_session();
    $yql = new YahooYQLQuery();
-   $rsp = $yql->query($query);
+   $rsp = $yql->execute($query);
    
    $bitly = $rsp->query->results->bitly;
    
