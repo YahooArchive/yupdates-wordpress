@@ -42,7 +42,7 @@ if (!defined( 'WP_PLUGIN_URL'))  define('WP_PLUGIN_URL', WP_CONTENT_URL. '/plugi
 if (!defined( 'WP_PLUGIN_DIR'))  define('WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
 define('YUPDATES_DEFAULT_TITLE_TEMPLATE', "posted '%blog_title%' on their WordPress blog '%blog_name%'");
-define('YUPDATES_EXTAUTH_HOST', "http://soldsomeheat-vm0.corp.yahoo.com/projects/extAuth");
+define('YUPDATES_EXTAUTH_HOST', "http://developer.yahoo.com/projects/createconsumerkey");
 define('YUPDATES_EXTAUTH_DEFAULT_SCOPES', "yurw");
 
 function yupdates_plugin_options() {
@@ -86,7 +86,7 @@ function yupdates_plugin_options() {
       <p>We've filled in the required fields below, click 'Create Application' below to submit.</p>
       <div id="yupdates_app_setup">
 <? else: ?>
-      <p>Hey, it looks like you've already set up your blog with Yahoo! Updates, awesome! <a onclick="switchDisplay('yupdates_app_setup');" title="Switch the Menu">Here's the form</a> if you'd like to update the application.</p>
+      <p>Hey, it looks like you've already set up your blog with Yahoo! Updates, awesome! <a onclick="_switchDisplay('yupdates_app_setup');" title="Switch the Menu">Here's the form</a> if you'd like to update the application.</p>
       <div id="yupdates_app_setup" style="display:none;">
 <? endif; ?>
       
@@ -164,7 +164,7 @@ function yupdates_plugin_options() {
       <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template,yupdates_bitly_apiKey,yupdates_bitly_login" />
       <?php if(function_exists("wp_nonce_field")) wp_nonce_field('update-options'); ?>
 		
-      <p class="submit"><input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" class="button-primary"/></p>
+      <p class="submit"><input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" class="button-primary" click="javascript:yupdates_submitAuthForm()"/></p>
    </form>
 </div>
 <script type="text/javascript">
@@ -187,11 +187,19 @@ function yupdates_setCredentials(consumer_key, consumer_secret, application_id) 
    _gel('createApp').appendChild(updated);
 }
 
+function yupdates_submitAuthForm() {
+   var form = _gel('yahoo_extAuthForm');
+   var formTarget = form.getAttribute('target');
+   
+   window.open('', formTarget, 'status=0,toolbar=0,location=0,menubar=0,width=545,height=650');
+   document.yahoo_extAuthForm.submit();
+}
+
 function _gel(id) {
    return document.getElementById(id);
 }
 
-function switchDisplay(obj) {
+function _switchDisplay(obj) {
 	var el = document.getElementById(obj);
 	el.style.display = (el.style.display != "none") ? 'none' : '';
 }

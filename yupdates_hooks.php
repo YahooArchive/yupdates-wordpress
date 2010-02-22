@@ -46,54 +46,26 @@ function yupdates_edit_post($postid)
 
 function yupdates_publish_post($postid) 
 {
-   $session = yupdates_get_session();
+   $post = get_post($postid);
+   $permalink = get_permalink($postid);
 	
-   if($session->hasSession) {
-      $post = get_post($postid);
-      $permalink = get_permalink($postid);
-		
-      $bitly_options = yupdates_get_bitly_options();
-      if($bitly_options->apiKey && $bitly_options->login) {
-         $bitly_permalink = yupdates_bitly_shorten($permalink, $bitly_options->apiKey, $bitly_options->login);
-         $permalink = $bitly_permalink;
-      }
-      
-      $title_template = get_option("yupdates_title_template");
-      $title_patterns = array('/%blog_title%/', '/%blog_name%/');
-      $title_replacements = array($post->post_title, get_bloginfo("name"));
-      
-      // $rsp = $session->application->insertUpdate(null, $update->description, $update->title, $update->link);
-      
-      $update = new stdclass();
-      $update->title = preg_replace($title_patterns, $title_replacements, $title_template);
-      $update->description = substr($post->post_excerpt, 0, 256);
-      $update->link = $permalink;
-		
-		// do this temporarily until we have the PHP5 SDK using YQL exclusively. 
-		$update->pubDate = time();
-		$update->guid = $session->application->token->yahoo_guid();
-		$update->source = 'APP.'.$session->application->application_id;
-		
-		$suid = sha1(json_encode($update));
-		
-      $query = "INSERT INTO social.updates (guid, title, description, link, pubDate, source, suid) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");";
-      $query = sprintf($query, 
-         $update->guid, 
-         $update->title, 
-         $update->description, 
-         $update->link, 
-         $update->pubDate, 
-         $update->source, 
-         $suid
-      );
-      
-      $rsp = $session->application->yql($query, array(), 'PUT');
-		
-		if(isset($rsp->error)) {
-         error_log("Failed to generate Yahoo! Update for blog post ({$postid}) ".json_encode($update));
-      }
-      
-      return $suid;
+   $bitly_options = yupdates_get_bitly_options();
+   if($bitly_options->apiKey && $bitly_options->login) {
+      $bitly_permalink = yupdates_bitly_shorten($permalink, $bitly_options->apiKey, $bitly_options->login);
+      $permalink = $bitly_permalink;
    }
+   
+   $title_template = get_option("yupdates_title_template");
+   $title_patterns = array('/%blog_title%/', '/%blog_name%/');
+   $title_replacements = array($post->post_title, get_bloginfo("name"));
+   
+   $update = new stdclass();
+   $update->title = preg_replace($title_patterns, $title_replacements, $title_template);
+   $update->description = substr($post->post_excerpt, 0, 256);
+   $update->link = $permalink;
+	
+	$suid = yupdates_insertUpdate($update);
+	
+	return $suid;
 }
 ?>

@@ -196,25 +196,43 @@ function yupdates_bitly_shorten($permalink, $apiKey, $login)
    $yql = new YahooYQLQuery();
    $rsp = $yql->execute($query);
    
-   $bitly = $rsp->query->results->bitly;
-   
-   if($bitly && $bitly->statusCode == 'OK' && isset($bitly->results)) {
-      $results = $bitly->results->nodeKeyVal;
+   if(isset($rsp->query) && isset($rsp->query->results)) {
+      $results = $rsp->query->results;
       
-      if($results && isset($results->shortUrl)) {
-         return $results->shortUrl;
+      $bitly = (isset($results->bitly)) ? $results->bitly : false;
+      
+      if($bitly && isset($bitly->results) && $bitly->statusCode == 'OK') {
+         $results = $bitly->results->nodeKeyVal;
+         
+         if($results && isset($results->shortUrl)) {
+            return $results->shortUrl;
+         }
       }
    }
-
+   
    return $permalink;
+}
+
+function yupdates_insertUpdate($update) 
+{
+   $session = yupdates_get_session();
+   
+   if($update && $session->hasSession) {
+      $suid = null;
+      $results = $session->application->insertUpdate(null, $update->description, $update->title, $update->link, $suid);
+      
+      return ($results) ? $suid : false;
+   }
+   
+   return false;
 }
 
 function yupdates_close_popup() 
 {
 ?>
-<script type="text/javascript">
-window.close();
-</script>
+ <script type="text/javascript">
+  window.close();
+ </script>
 <?php
 }
 ?>
