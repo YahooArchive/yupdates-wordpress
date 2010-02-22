@@ -42,7 +42,7 @@ if (!defined( 'WP_PLUGIN_URL'))  define('WP_PLUGIN_URL', WP_CONTENT_URL. '/plugi
 if (!defined( 'WP_PLUGIN_DIR'))  define('WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
 define('YUPDATES_DEFAULT_TITLE_TEMPLATE', "posted '%blog_title%' on their WordPress blog '%blog_name%'");
-define('YUPDATES_EXTAUTH_HOST', "http://yosqa.ydn.yahoo.com/projects/createconsumerkey?debug");
+define('YUPDATES_EXTAUTH_HOST', "http://developer.yahoo.com/projects/createconsumerkey");
 define('YUPDATES_EXTAUTH_DEFAULT_SCOPES', "yurw");
 
 function yupdates_plugin_options() {
