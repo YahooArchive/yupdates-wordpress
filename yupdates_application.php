@@ -43,12 +43,10 @@ function yupdates_plugin_application() {
    echo <<<HTML
 <script type="text/javascript">
 var opener = parent.opener;
-
 if(opener.hasOwnProperty('yupdates_setCredentials') && typeof opener.yupdates_setCredentials == 'function') {
-  opener.yupdates_setCredentials("{$consumer_key}","{$consumer_secret}","{$application_id}");
+   opener.yupdates_setCredentials("{$consumer_key}","{$consumer_secret}","{$application_id}");
 }
 </script>
-
 HTML;
 }
 

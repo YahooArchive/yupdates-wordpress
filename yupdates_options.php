@@ -42,7 +42,7 @@ if (!defined( 'WP_PLUGIN_URL'))  define('WP_PLUGIN_URL', WP_CONTENT_URL. '/plugi
 if (!defined( 'WP_PLUGIN_DIR'))  define('WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
 define('YUPDATES_DEFAULT_TITLE_TEMPLATE', "posted '%blog_title%' on their WordPress blog '%blog_name%'");
-define('YUPDATES_EXTAUTH_HOST', "http://developer.yahoo.com/projects/createconsumerkey");
+define('YUPDATES_EXTAUTH_HOST', "http://yosqa.ydn.yahoo.com/projects/createconsumerkey?debug");
 define('YUPDATES_EXTAUTH_DEFAULT_SCOPES', "yurw");
 
 function yupdates_plugin_options() {
@@ -74,6 +74,7 @@ function yupdates_plugin_options() {
 
 <style type="text/css">
    .authTitle {text-transform: uppercase;}
+   .hidden-node {display:none;}
 </style>
 
 <div class="wrap">
@@ -86,7 +87,7 @@ function yupdates_plugin_options() {
       <p>We've filled in the required fields below, click 'Create Application' below to submit.</p>
       <div id="yupdates_app_setup">
 <? else: ?>
-      <p>Hey, it looks like you've already set up your blog with Yahoo! Updates, awesome! <a onclick="_switchDisplay('yupdates_app_setup');" title="Switch the Menu">Here's the form</a> if you'd like to update the application.</p>
+      <p>Hey, it looks like you've already set up your blog with Yahoo! Updates, awesome! <a id="switchForm" title="Switch the Menu">Here's the form</a> if you'd like to update the application.</p>
       <div id="yupdates_app_setup" style="display:none;">
 <? endif; ?>
       
@@ -114,7 +115,7 @@ function yupdates_plugin_options() {
          <input type="hidden" name="domain" value="<?php echo $extAuth_host ?>">
          <input type="hidden" name="appid" value="<?php echo $appid; ?>"/>
 		
-         <p id="createApp" class="submit"><input type="submit" name="Submit" value="<?php ($appid) ? _e('Update Application') : _e('Create Application') ?>"/></p>
+         <p id="createApp" class="submit"><input id="authSubmit" type="submit" name="Submit" value="<?php ($appid) ? _e('Update Application') : _e('Create Application') ?>"/></p>
       </form>
    </div>
    
@@ -164,45 +165,56 @@ function yupdates_plugin_options() {
       <input type="hidden" name="page_options" value="yupdates_consumer_key,yupdates_consumer_secret,yupdates_application_id,yupdates_title_template,yupdates_bitly_apiKey,yupdates_bitly_login" />
       <?php if(function_exists("wp_nonce_field")) wp_nonce_field('update-options'); ?>
 		
-      <p class="submit"><input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" class="button-primary" click="javascript:yupdates_submitAuthForm()"/></p>
+      <p class="submit"><input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" class="button-primary"/></p>
    </form>
 </div>
+<script src="http://yui.yahooapis.com/3.0.0/build/yui/yui-min.js"></script>
 <script type="text/javascript">
+var _Y = null;
+
 <!--
 function yupdates_setCredentials(consumer_key, consumer_secret, application_id) {
-	_gel('yupdates_consumer_key').value = consumer_key;
-	_gel('yupdates_consumer_secret').value = consumer_secret;
-	_gel('yupdates_application_id').value = application_id;
-		
-	var updated = document.createElement('div');
-   updated.className = "updated fade";
+   if(_Y) _Y.fire('yupdates:handleSetCredentials', consumer_key, consumer_secret, application_id);
    
-   if(consumer_key && consumer_secret && application_id) {
-     updated.innerHTML = "<p><strong>Thanks! Click '<?php _e('Save Changes'); ?>' below to continue.</strong></p>";
-   } else {
-     updated.innerHTML = "<p><strong>Uh oh. Missing required keys from extAuth response.";
-     updated.innerHTML+= "consumer_key = '"+consumer_key+"', consumer_secret = '"+consumer_secret+"', application_id = '"+application_id+"'</strong></p>";
-   }
-   
-   _gel('createApp').appendChild(updated);
-}
-
-function yupdates_submitAuthForm() {
-   var form = _gel('yahoo_extAuthForm');
-   var formTarget = form.getAttribute('target');
-   
-   window.open('', formTarget, 'status=0,toolbar=0,location=0,menubar=0,width=545,height=650');
-   document.yahoo_extAuthForm.submit();
+   return true;
 }
 
 function _gel(id) {
    return document.getElementById(id);
 }
 
-function _switchDisplay(obj) {
-	var el = document.getElementById(obj);
-	el.style.display = (el.style.display != "none") ? 'none' : '';
-}
+YUI().use('node', function(Y) {
+   _Y = Y;
+   Y.on('click', function(event){
+      var form = Y.one('#yahoo_extAuthForm');
+      var formTarget = form.getAttribute('target');
+      window.open('', formTarget, 'status=0,toolbar=0,location=0,menubar=0,width=545,height=650');
+      document.yahoo_extAuthForm.submit();
+   }, '#authSubmit');
+   
+   Y.on('click', function(event){
+      var node = Y.one('#yupdates_app_setup');
+      var display = (node.getStyle('display') == 'none') ? '' : 'none';
+      node.setStyle('display', display);
+   }, '#switchForm');
+   
+   Y.on('yupdates:handleSetCredentials', function(key, secret, appid) {
+      Y.one('#yupdates_consumer_key').set('value', key);
+      Y.one('#yupdates_consumer_secret').set('value', secret);
+      Y.one('#yupdates_application_id').set('value', appid);
+      
+      var updated = Y.Node.create('<div>').addClass('updated fade');
+      if(key && secret && appid) {
+         updated.setContent("<p><strong>Thanks! Click '<?php _e('Save Changes'); ?>' below to continue.</strong></p>");
+      } else {
+         var content = "<p><strong>Uh oh, missing required keys from response.";
+         content += "consumer_key = '"+key+"', consumer_secret = '"+secret+"', application_id = '"+appid+"'</strong></p>";
+         updated.setContent(content);
+      }
+      
+      Y.one('#createApp').append(updated);
+   });
+});
 //-->
 </script>
 <?
