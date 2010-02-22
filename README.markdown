@@ -7,7 +7,7 @@ Find documentation and support on Yahoo! Developer Network: http://developer.yah
  * Yahoo! Social APIs - http://developer.yahoo.com/social/
  * Yahoo! Query Language - http://developer.yahoo.com/yql/
 
-Hosted on GitHub: http://github.com/yahoo/yos-updates-wordpress/tree/master
+Hosted on GitHub: http://github.com/yahoo/yupdates-wordpress/tree/master
 
 License
 =======
