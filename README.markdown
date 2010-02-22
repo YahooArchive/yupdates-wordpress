@@ -55,19 +55,19 @@ The Yahoo! Updates WordPress Plugin code is subject to the BSD license, see the 
 
 Requirements
 ============
- * A WordPress installation located on a non *.wordpress.com domain and the ability to install a plugin and access & modify files at the root of a domain.
+ * A self-hosted WordPress installation with the ability to install a plugin.
  * A web server running PHP 5+.
- * yos-social-php5 - http://github.com/yahoo/yos-social-php5/
+ * The Yahoo Social PHP5 SDK (yos-social-php5) - http://github.com/yahoo/yos-social-php5/
 
 Installation
 ============
 
 ## Manual Installation
 
-* Download and unpack the [yos-social-php5](http://github.com/yahoo/yos-social-php5/) and [yos-updates-wordpress](https://github.com/yahoo/yos-updates-wordpress/) source code releases. 
+* Download and unpack the [yos-social-php5](http://github.com/yahoo/yos-social-php5/) and [yupdates-wordpress](https://github.com/yahoo/yupdates-wordpress/) source code releases. 
 * After downloading and unpacking both packages, copy the contents of the SDK at 'yos-social-php5/lib'
-to 'yos-updates-wordpress/lib' to install the SDK. A combination install containing all required files is only available from the WordPress plugin directory. (This is our development repository)
-* Upload the 'yos-updates-wordpress' directory to the 'wp-content/plugins' directory of your WordPress installation.
-* After installation, configure the plugin according to the instructions provided in the WordPress admin dashboard.
+to a new directory 'yupdates-wordpress/lib' to install the SDK. A combination install containing all required files is only available from the WordPress plugin directory. (This is our development repository)
+* Upload the 'yupdates-wordpress' directory to the 'wp-content/plugins/' directory of your WordPress installation on a server.
+* After installation, configure the plugin according to the instructions provided in the WordPress plugin page.
 
 ## Plugin Directory

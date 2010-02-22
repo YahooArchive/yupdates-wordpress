@@ -62,7 +62,7 @@ function yupdates_plugin_options() {
    $extAuth_description = get_bloginfo('description');
    $extAuth_third_party = $extAuth_host;
    $extAuth_scopes = YUPDATES_EXTAUTH_DEFAULT_SCOPES;
-   $extAuth_return_to_url = sprintf("%s/plugins/yupdates_wordpress/yupdates_application.php", WP_CONTENT_URL);
+   $extAuth_return_to_url = sprintf("%s/plugins/yupdates-wordpress/yupdates_application.php", WP_CONTENT_URL);
    $extAuth_favicon_url = sprintf("http://%s/favicon.ico", $extAuth_host);
 
    // blog options
