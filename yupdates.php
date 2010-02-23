@@ -34,21 +34,12 @@
  *   THE SOFTWARE.
  **/
 /*
-=== Yahoo! Updates for WordPress ===
-Contributors: zagraves
-Author: Yahoo! Inc.
-Plugin URI: http://github.com/yahoo/yupdates-wordpress
-Tags: yahoo, updates, posts
+Plugin Name: Yahoo! Updates for WordPress
+Plugin URI: http://developer.yahoo.com/social/
+Description: Posts a Yahoo! Update to your connections when you update your WordPress blog.
 Version: 1.0
-Requires at least: 2.2.1
-Tested up to: 2.9.2
-
-Posts a Yahoo! Update to your connections when you update your WordPress blog.
-
-== Description ==
-
-== Installation ==
-
+Author: Yahoo! Inc.
+Author URI: http://www.yahoo.com/
 */
 ?>
 <?php
