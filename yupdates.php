@@ -36,7 +36,7 @@
 /*
 Plugin Name: Yahoo! Updates for WordPress
 Plugin URI: http://developer.yahoo.com/social/
-Description: Posts a Yahoo! Update to your connections when you update your WordPress blog.
+Description: Posts a Yahoo! Update to your connections when you publish a new blog post.
 Version: 1.0
 Author: Yahoo! Inc.
 Author URI: http://www.yahoo.com/
