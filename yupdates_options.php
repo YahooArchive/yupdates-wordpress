@@ -42,7 +42,7 @@ if (!defined( 'WP_PLUGIN_URL'))  define('WP_PLUGIN_URL', WP_CONTENT_URL. '/plugi
 if (!defined( 'WP_PLUGIN_DIR'))  define('WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 
 define('YUPDATES_DEFAULT_TITLE_TEMPLATE', "posted '%blog_title%' on their WordPress blog '%blog_name%'");
-define('YUPDATES_EXTAUTH_HOST', "http://developer.yahoo.com/projects/createconsumerkey");
+define('YUPDATES_EXTAUTH_HOST', "http://developer.apps.yahoo.com/projects/createconsumerkey");
 define('YUPDATES_EXTAUTH_DEFAULT_SCOPES', "yurw");
 
 function yupdates_plugin_options() {
@@ -62,8 +62,12 @@ function yupdates_plugin_options() {
    $extAuth_description = get_bloginfo('description');
    $extAuth_third_party = $extAuth_host;
    $extAuth_scopes = YUPDATES_EXTAUTH_DEFAULT_SCOPES;
-   $extAuth_return_to_url = sprintf("%s/plugins/yupdates-wordpress/yupdates_application.php", WP_CONTENT_URL);
    $extAuth_favicon_url = sprintf("http://%s/favicon.ico", $extAuth_host);
+   
+   // Important note:
+   // If the plugin source files are located in a different directory than listed above, 
+   // you'll need to set the correct path to yupdates_application.php
+   $extAuth_return_to_url = sprintf("%s/plugins/yahoo-updates-for-wordpress/yupdates_application.php", WP_CONTENT_URL);
 
    // blog options
    $title_template_opt = get_option('yupdates_title_template');
@@ -104,7 +108,7 @@ function yupdates_plugin_options() {
             <tr valign="top">
                <th scope="row">Favicon URL</th>
                <td><input type="text" size="35" name="favicon" value="<?php echo $extAuth_favicon_url; ?>" />
-                  <br/><small>.ico files may not render correctly in IE</small></td>
+                <br/><small>A valid favicon URL is required.</small></td>
             </tr>
          </table>
          
@@ -114,6 +118,8 @@ function yupdates_plugin_options() {
          <input type="hidden" name="application_url" value="<?php echo $extAuth_application_url ?>">
          <input type="hidden" name="domain" value="<?php echo $extAuth_host ?>">
          <input type="hidden" name="appid" value="<?php echo $appid; ?>"/>
+         
+         <input type="hidden" name="debug" value="true"/>
 		
          <p id="createApp" class="submit"><input id="authSubmit" type="submit" name="Submit" value="<?php ($appid) ? _e('Update Application') : _e('Create Application') ?>"/></p>
       </form>
@@ -207,7 +213,7 @@ YUI().use('node', function(Y) {
       if(key && secret && appid) {
          updated.setContent("<p><strong>Thanks! Click '<?php _e('Save Changes'); ?>' below to continue.</strong></p>");
       } else {
-         var content = "<p><strong>Uh oh, missing required keys from response.";
+         var content = "<p><strong>Missing required keys from response.";
          content += "consumer_key = '"+key+"', consumer_secret = '"+secret+"', application_id = '"+appid+"'</strong></p>";
          updated.setContent(content);
       }
