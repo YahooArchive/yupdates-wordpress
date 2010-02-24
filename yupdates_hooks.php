@@ -46,26 +46,35 @@ function yupdates_edit_post($postid)
 
 function yupdates_publish_post($postid) 
 {
-   $post = get_post($postid);
-   $permalink = get_permalink($postid);
-	
-   $bitly_options = yupdates_get_bitly_options();
-   if($bitly_options->apiKey && $bitly_options->login) {
-      $bitly_permalink = yupdates_bitly_shorten($permalink, $bitly_options->apiKey, $bitly_options->login);
-      $permalink = $bitly_permalink;
+   $post_status = $_POST['post_status'];
+   $original_post_status = $_POST['original_post_status'];
+   
+   // Secret Hint: if you want to publish a *new* update whenever you update a blog post, 
+   // set this var below to FALSE;
+   $block_update_publish = TRUE;
+   
+   if($block_update_publish && $post_status == 'publish' && $original_post_status != 'publish') {
+      $post = get_post($postid);
+      $permalink = get_permalink($postid);
+
+      $bitly_options = yupdates_get_bitly_options();
+      if($bitly_options->apiKey && $bitly_options->login) {
+         $bitly_permalink = yupdates_bitly_shorten($permalink, $bitly_options->apiKey, $bitly_options->login);
+         $permalink = $bitly_permalink;
+      }
+
+      $title_template = get_option("yupdates_title_template");
+      $title_patterns = array('/%blog_title%/', '/%blog_name%/');
+      $title_replacements = array($post->post_title, get_bloginfo("name"));
+
+      $update = new stdclass();
+      $update->title = preg_replace($title_patterns, $title_replacements, $title_template);
+      $update->description = substr($post->post_excerpt, 0, 256);
+      $update->link = $permalink;
+
+   	$suid = yupdates_insertUpdate($update);
+
+   	return $suid;
    }
-   
-   $title_template = get_option("yupdates_title_template");
-   $title_patterns = array('/%blog_title%/', '/%blog_name%/');
-   $title_replacements = array($post->post_title, get_bloginfo("name"));
-   
-   $update = new stdclass();
-   $update->title = preg_replace($title_patterns, $title_replacements, $title_template);
-   $update->description = substr($post->post_excerpt, 0, 256);
-   $update->link = $permalink;
-	
-	$suid = yupdates_insertUpdate($update);
-	
-	return $suid;
 }
 ?>
